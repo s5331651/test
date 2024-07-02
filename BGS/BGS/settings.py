@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +28,7 @@ SECRET_KEY = 'django-insecure-58x*n6w$%t23)oo%@of1_1hdrfdx3it(4n!*u*v&vhjzizmtb_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['16.170.168.22']
+ALLOWED_HOSTS = ['16.170.168.22', '127.0.0.1']
 
 
 
@@ -51,8 +54,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
 ]
+
 
 ROOT_URLCONF = 'BGS.urls'
 
@@ -120,8 +123,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
 
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -134,3 +141,18 @@ CORS_ALLOWED_ORIGINS = [
     "http://16.170.168.22:3000"
 ]
  
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = 'home'
+
+# settings.py
+
+INFLUXDB_SETTINGS = {
+    'url': 'http://16.170.168.22:8086/',  # InfluxDB server URL
+    'token': 'sj2xs1viyT0lB3qWWgdcPX4AfsX72QA0cIN539NuifoVx8T7TGR2Xr0kMuS3QjbfQxMrCwlCn4ZT2lCcPrvAew==',  # InfluxDB authentication token
+    'org': 'BU',               # InfluxDB organization name
+    'bucket': 'MKR(Gen)',         # InfluxDB bucket name
+}
