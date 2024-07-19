@@ -141,6 +141,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://16.170.168.22:3000",
     "http://13.53.78.253:8000",
     "http://13.53.78.253:3000",
+    "https://s5331651.grafana.net/public-dashboards/d747549302204b9b934e7eca67bc0c4c"
 ]
  
 AUTHENTICATION_BACKENDS = [
@@ -158,3 +159,6 @@ INFLUXDB_SETTINGS = {
     'org': 'BU',               # InfluxDB organization name
     'bucket': 'MKR(Gen)',         # InfluxDB bucket name
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Device Detail</title>
+<title>BU Landslide Monitoring</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -18,12 +18,7 @@
       height: 100%;
     }
 
-    /* Set the map height and make sure it fits within its container */
-    #map-container {
-      height: 400px; /* Adjust the height as needed */
-      width: 100%; /* Full width of its container */
-    }
-        
+
     /* On small screens, set height to 'auto' for the grid */
     @media screen and (max-width: 767px) {
       .row.content {height: auto;} 
@@ -50,7 +45,7 @@
     <!-- Updated logo section with a link to the homepage -->
     <h2><a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">Bournemouth University Landslide Monitoring</a></h2>
     <ul class="nav nav-pills nav-stacked">
-        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'dashboard' %}">Overview</a></li>
         {% for d in devices %}
         <li {% if d.id == device.id %}class="active"{% endif %}><a href="{% url 'device_detail' id=d.id %}">{{ d.arduino_id }}</a></li>
         {% endfor %}
@@ -66,11 +61,13 @@
         </div>
     </div>
 
-    <!-- Map container inside the main content column -->
     <div class="well">
         <h4>Device Locations</h4>
-        <div id="map-container"></div> <!-- Map container with defined height -->
+        <div id="map-container">
+            {{ map_html | safe }}
+        </div>
     </div>
+
 
     <!-- Grafana dashboard iframe section -->
     <div class="well">
@@ -93,51 +90,8 @@
     {% endif %}
 </div>
 
-<!-- Include Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-<script>
-    // Initialize the map with default center and zoom level
-    var map = L.map('map-container').setView([0, 0], 2);  
 
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 10,
-    }).addTo(map);
 
-    // Parse the devices data passed from the view
-    var devices = JSON.parse('{{ devices_json|escapejs }}');
-    var selectedDeviceId = '{{ device.arduino_id|escapejs }}'; // Get the selected device ID
-    
-    // Loop through devices and find the bounds
-    var bounds = [];
-    devices.forEach(function(device) {
-        if (device.latitude !== null && device.longitude !== null) {
-            // Add markers for each device with valid coordinates
-            var marker = L.marker([device.latitude, device.longitude])
-                         .addTo(map);
-            
-            // Customize the popup content to include GPS coordinates
-            var popupContent = "Arduino ID: " + device.arduino_id + "<br>" +
-                               "Latitude: " + device.latitude + "<br>" +
-                               "Longitude: " + device.longitude;
-            marker.bindPopup(popupContent);
-            
-            // Add the device's coordinates to the bounds array
-            bounds.push([device.latitude, device.longitude]);
 
-            // Change color of the marker for the selected device
-            if (device.arduino_id === selectedDeviceId) {
-                marker._icon.classList.add("selected-marker");
-            } else {
-                marker._icon.classList.add("unselected-marker");
-            }
-        }
-    });
-
-    // Fit the map to the bounds of all markers
-    if (bounds.length > 0) {
-        map.fitBounds(bounds);
-    }
-</script>
 </body>
 </html>

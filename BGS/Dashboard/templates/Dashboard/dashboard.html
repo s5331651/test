@@ -1,112 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap Example</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" /> <!-- Include Leaflet CSS -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <style>
-    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-    .row.content {height: 100vh;} /* Full viewport height */
-    
-    /* Set gray background color and 100% height */
-    .sidenav {
-      background-color: #f1f1f1;
-      height: 100%;
-    }
-
-    /* Set the map height and make sure it fits within its container */
-    #map-container {
-      height: 400px; /* Adjust the height as needed */
-      width: 100%; /* Full width of its container */
-    }
+    <title>BU Landslide Monitoring</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+        .row.content { height: 100vh; } /* Full viewport height */
         
-    /* On small screens, set height to 'auto' for the grid */
-    @media screen and (max-width: 767px) {
-      .row.content {height: auto;} 
-    }
-  </style>
+        /* Set gray background color and 100% height */
+        .sidenav {
+            background-color: #f1f1f1;
+            height: 100%;
+        }
+
+        /* On small screens, set height to 'auto' for the grid */
+        @media screen and (max-width: 767px) {
+            .row.content { height: auto; } 
+        }
+
+        /* Customize the size of the Grafana iframe */
+        #grafana-iframe {
+            width: 100%; /* Full width of its container */
+            height: 600px; /* Set height as needed */
+            border: none; /* Remove border for a clean look */
+        }
+
+        /* Set image styles */
+        #outlier-image {
+            width: 100%; /* Full width of its container */
+            height: auto; /* Adjust height automatically */
+            border: none; /* Remove border for a clean look */
+            display: block; /* Center the image */
+            margin: 0 auto; /* Center the image horizontally */
+        }
+
+        /* Style for the button */
+        .btn-link {
+            color: #337ab7; /* Blue color for links */
+            text-decoration: none; /* Remove underline */
+        }
+    </style>
 </head>
 <body>
-
-
-  <div class="col-sm-3 sidenav hidden-xs">
-    <!-- Updated logo section with a link to the homepage -->
-    <h2><a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">Bournemouth University Landslide Monitoring</a></h2>
-    <ul class="nav nav-pills nav-stacked">
-        <li class="active"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-        {% for device in devices %}
-        <li><a href="{% url 'device_detail' id=device.id %}">{{ device.arduino_id }}</a></li>
-        {% endfor %}
-    </ul><br>
-</div>
-
-<div class="col-sm-9">
-    <div class="well">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-xs-8">
-                <h2>Welcome, {% if user.is_authenticated %}{{ user.username }}{% endif %}!</h4>
+            <div class="col-sm-3 sidenav hidden-xs">
+                <!-- Updated logo section with a link to the homepage -->
+                <h2><a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">Bournemouth University Landslide Monitoring</a></h2>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="{% url 'dashboard' %}">Overview</a></li>
+                    {% for device in devices %}
+                        <li><a href="{% url 'device_detail' id=device.id %}">{{ device.arduino_id }}</a></li>
+                    {% endfor %}
+                </ul><br>
             </div>
-            <div class="col-xs-4 text-right">
-                {% if user.is_authenticated %}
-                <form action="{% url 'logout' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger" style="background-color: rgb(71, 67, 67);">Logout</button>
-                </form>
-                {% endif %}
+
+            <div class="col-sm-9">
+                <div class="well">
+                    <div class="row">
+                        <div class="col-xs-8">
+                            <h2>Welcome, {% if user.is_authenticated %}{{ user.username }}{% endif %}!</h2>
+                        </div>
+                        <div class="col-xs-4 text-right">
+                            {% if user.is_authenticated %}
+                                <form action="{% url 'logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger" style="background-color: rgb(71, 67, 67);">Logout</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Device Locations with Folium map -->
+                <div class="well">
+                    <h4>Device Locations</h4>
+                    {{ map_html | safe }}
+                </div>
+
+                <!-- Grafana Dashboard Embed -->
+                <div class="well">
+                    <h4>Grafana Dashboard</h4>
+                    <!-- Replace the URL below with your public Grafana dashboard link -->
+                    <iframe id="grafana-iframe" src="http://13.53.78.253:3000/public-dashboards/71e8f9f372634d21b6866bb5c158344e"></iframe>
+                </div>
+
+                <!-- Button to link to another webpage -->
+                <div class="well">
+                    <h4>Visit Outlier Detector Webpage</h4>
+                    <a href="https://s5331651.grafana.net/public-dashboards/d747549302204b9b934e7eca67bc0c4c" class="btn btn-link" target="_blank">Go to Outlier Detector</a>
+                </div>
             </div>
         </div>
-
     </div>
-
-    <!-- Map container inside the main content column -->
-    <div class="well">
-        <h4>Device Locations</h4>
-        <div id="map-container"></div> <!-- Map container with defined height -->
-    </div>
-</div>
-
-<!-- Include Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-<script>
-    // Initialize the map with default center and zoom level
-    var map = L.map('map-container').setView([0, 0], 2);  
-
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 10,
-    }).addTo(map);
-
-    // Parse the devices data passed from the view
-    var devices = JSON.parse('{{ devices_json|escapejs }}');
-    
-    // Loop through devices and find the bounds
-    var bounds = [];
-    devices.forEach(function(device) {
-        if (device.latitude !== null && device.longitude !== null) {
-            // Add markers for each device with valid coordinates
-            var marker = L.marker([device.latitude, device.longitude])
-                         .addTo(map);
-            
-            // Customize the popup content to include GPS coordinates
-            var popupContent = "Arduino ID: " + device.arduino_id + "<br>" +
-                               "Latitude: " + device.latitude + "<br>" +
-                               "Longitude: " + device.longitude;
-            marker.bindPopup(popupContent);
-            
-            // Add the device's coordinates to the bounds array
-            bounds.push([device.latitude, device.longitude]);
-        }
-    });
-
-    // Fit the map to the bounds of all markers
-    if (bounds.length > 0) {
-        map.fitBounds(bounds);
-    }
-</script>
 
 </body>
 </html>

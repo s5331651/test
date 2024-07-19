@@ -10,4 +10,5 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('device/<int:id>/', views.device_detail, name='device_detail'), # Import and use the device_list view
     path('influxdb/', influxdb_latest_view, name='influxdb_latest'),
+    path('map/', views.map_view, name='map_view'),
 ]
