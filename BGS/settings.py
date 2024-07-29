@@ -28,8 +28,7 @@ SECRET_KEY = 'django-insecure-58x*n6w$%t23)oo%@of1_1hdrfdx3it(4n!*u*v&vhjzizmtb_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['16.170.168.22', '127.0.0.1', '16.170.168.22:3000',
-    '13.53.78.253:8000','13.53.78.253:3000' ]
+ALLOWED_HOSTS = ['16.170.168.22', '127.0.0.1',  '13.53.78.253' ]
 
 
 
@@ -142,6 +141,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://16.170.168.22:3000",
     "http://13.53.78.253:8000",
     "http://13.53.78.253:3000",
+    "https://s5331651.grafana.net/public-dashboards/d747549302204b9b934e7eca67bc0c4c"
 ]
  
 AUTHENTICATION_BACKENDS = [
@@ -159,3 +159,6 @@ INFLUXDB_SETTINGS = {
     'org': 'BU',               # InfluxDB organization name
     'bucket': 'MKR(Gen)',         # InfluxDB bucket name
 }
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

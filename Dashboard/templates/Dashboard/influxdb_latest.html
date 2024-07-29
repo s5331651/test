@@ -1,0 +1,35 @@
+<!-- influxdb_latest.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>InfluxDB Latest Data</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>InfluxDB Latest Measurements</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Measurement</th>
+                    <th>Field</th>
+                    <th>Value</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in data %}
+                    <tr>
+                        <td>{{ record.measurement }}</td>
+                        <td>{{ record.field }}</td>
+                        <td>{{ record.value }}</td>
+                        <td>{{ record.time }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
